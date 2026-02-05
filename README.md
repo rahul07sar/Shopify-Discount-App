@@ -12,7 +12,7 @@ Shopify app that adds product‑level automatic discounts via a Shopify Function
 2. `shopify run dev` (starts Shopify CLI + app dev preview)
 
 Useful commands:
-1. `npm run build` (build app)
+1. `npm run build` / `shopify run dev` (build app)
 2. `npm run typecheck` (TS check)
 3. Function (from `extensions/buy-2-get-free`):
    1. `npm run typegen`

@@ -1,0 +1,18 @@
+query CartInput {
+  cart {
+    lines {
+      id
+      quantity
+      merchandise {
+        ... on ProductVariant {
+          product { id }
+        }
+      }
+    }
+  }
+  shop {
+    metafield(namespace: "custom", key: "volume_discount_rules") {
+      jsonValue
+    }
+  }
+}

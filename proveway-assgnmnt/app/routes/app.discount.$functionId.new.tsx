@@ -9,6 +9,7 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { Form, data, redirect, useActionData, useLoaderData } from "react-router";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
+import { useLocation } from "react-router";
 
 type ProductSummary = {
   id: string;
@@ -305,13 +306,16 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     );
   }
 
-  return redirect(`/app/discount/${functionId}/${encodeURIComponent(discountId)}`);
+  return redirect(
+  `/app/discount/${functionId}/${encodeURIComponent(discountId)}?created=1`,
+  );
 };
 
 export default function DiscountCreate() {
   const { products, defaults } = useLoaderData<typeof loader>();
   const actionData = useActionData<ActionData>();
   const shopify = useAppBridge();
+  const location = useLocation();
 
   const initialSelected =
     actionData?.fields?.products ?? defaults.products ?? [];
@@ -327,6 +331,13 @@ export default function DiscountCreate() {
       shopify.toast.show(actionData.errors[0].message);
     }
   }, [actionData?.errors, shopify]);
+
+  useEffect(() => {
+  const params = new URLSearchParams(location.search);
+  if (params.get("created") === "1") {
+    shopify.toast.show("Discount created successfully");
+    }
+  }, [location.search, shopify]);
 
   return (
     <s-page heading="Create Buy 2 Get % Off">

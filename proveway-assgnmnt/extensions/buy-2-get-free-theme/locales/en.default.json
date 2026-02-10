@@ -1,0 +1,10 @@
+{
+  "blocks": {
+    "buy-2-get-percent-off": {
+      "name": "Buy 2, get % off"
+    },
+    "buy-2-get-percent-off-cart": {
+      "name": "Buy 2, get % off (Cart)"
+    }
+  }
+}

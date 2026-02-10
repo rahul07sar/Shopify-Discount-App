@@ -1,14 +1,8 @@
 {%- comment -%}
   App block: renders a Buy 2, get % off message on cart pages when eligible.
 {%- endcomment -%}
-{% assign rules_raw = shop.metafields.custom.volume_discount_rules.value %}
-{% assign rules_parsed = rules_raw | parse_json %}
-{% assign rules = rules_parsed | default: rules_raw %}
+{% assign rules = shop.metafields.custom.volume_discount_rules.value %}
 {% assign rules_list = rules.rules %}
-{% if rules_list == blank and rules.products %}
-  {% assign rules_list = "" | split: "," %}
-  {% assign rules_list = rules_list | push: rules %}
-{% endif %}
 
 {% assign best_percent = 0 %}
 {% if rules_list %}
@@ -39,6 +33,31 @@
         {% endif %}
       {% endif %}
     {% endfor %}
+  {% endfor %}
+{% elsif rules and rules.products %}
+  {% for item in cart.items %}
+    {% assign item_gid = item.product.admin_graphql_api_id %}
+    {% assign item_id = item.product.id | append: "" %}
+    {% assign rule_match = false %}
+    {% for rule_id in rules.products %}
+      {% if item_gid and rule_id == item_gid %}
+        {% assign rule_match = true %}
+        {% break %}
+      {% endif %}
+      {% if item_id != blank %}
+        {% assign rule_numeric = rule_id | split: "/" | last %}
+        {% if rule_numeric == item_id %}
+          {% assign rule_match = true %}
+          {% break %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+    {% if rule_match %}
+      {% assign rule_percent = rules.percentOff | plus: 0 %}
+      {% if rule_percent > best_percent %}
+        {% assign best_percent = rule_percent %}
+      {% endif %}
+    {% endif %}
   {% endfor %}
 {% endif %}
 

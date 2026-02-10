@@ -184,7 +184,7 @@ function normalizeDiscountIds(rawId?: string) {
   if (/^\d+$/.test(decoded)) {
     return {
       discountNodeId: `gid://shopify/DiscountNode/${decoded}`,
-      updateId: decoded,
+      updateId: `gid://shopify/DiscountAutomaticApp/${decoded}`,
     };
   }
 

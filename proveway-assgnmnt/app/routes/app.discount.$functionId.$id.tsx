@@ -98,7 +98,8 @@ const METAFIELDS_SET_MUTATION = `#graphql
     }
   }`;
 
-function parseRule(raw: unknown): DiscountRule | null {
+//Validate the disocunt rule.
+  function parseRule(raw: unknown): DiscountRule | null {
   if (!raw || typeof raw !== "object") return null;
 
   const rawPercent = (raw as { percentOff?: unknown }).percentOff;
@@ -158,6 +159,7 @@ function parseRules(raw: unknown): DiscountRule[] {
   return legacyRule ? [legacyRule] : [];
 }
 
+//Normalize shopify IDs.
 function normalizeDiscountIds(rawId?: string) {
   if (!rawId) {
     return { discountNodeId: undefined, updateId: undefined };
@@ -191,6 +193,7 @@ function normalizeDiscountIds(rawId?: string) {
   return { discountNodeId: decoded, updateId: decoded };
 }
 
+//page loader
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { admin } = await authenticate.admin(request);
 

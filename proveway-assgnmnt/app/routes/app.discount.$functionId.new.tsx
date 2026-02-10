@@ -9,7 +9,6 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { Form, data, redirect, useActionData, useLoaderData } from "react-router";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
-import { useLocation } from "react-router";
 
 type ProductSummary = {
   id: string;
@@ -139,6 +138,7 @@ function parseRules(raw: unknown): DiscountRule[] {
   return legacyRule ? [legacyRule] : [];
 }
 
+//page loader
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const { admin } = await authenticate.admin(request);
   const productsResponse = await admin.graphql(PRODUCTS_QUERY, {
@@ -159,6 +159,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   });
 };
 
+//Create discount action(submit)
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const { admin } = await authenticate.admin(request);
   const formData = await request.formData();
@@ -306,16 +307,13 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     );
   }
 
-  return redirect(
-  `/app/discount/${functionId}/${encodeURIComponent(discountId)}?created=1`,
-  );
+  return redirect(`/app/discount/${functionId}/${encodeURIComponent(discountId)}`);
 };
 
 export default function DiscountCreate() {
   const { products, defaults } = useLoaderData<typeof loader>();
   const actionData = useActionData<ActionData>();
   const shopify = useAppBridge();
-  const location = useLocation();
 
   const initialSelected =
     actionData?.fields?.products ?? defaults.products ?? [];
@@ -331,13 +329,6 @@ export default function DiscountCreate() {
       shopify.toast.show(actionData.errors[0].message);
     }
   }, [actionData?.errors, shopify]);
-
-  useEffect(() => {
-  const params = new URLSearchParams(location.search);
-  if (params.get("created") === "1") {
-    shopify.toast.show("Discount created successfully");
-    }
-  }, [location.search, shopify]);
 
   return (
     <s-page heading="Create Buy 2 Get % Off">
